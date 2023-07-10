@@ -1,6 +1,8 @@
 package org.accounting.interfaces;
 
+import org.accounting.validity.ExecutionCode;
+
 public interface CategoryHandler {
-    int addCategory(String title);
-    int removeCategory(String title);
+    ExecutionCode addCategory(String title);
+    ExecutionCode removeCategory(String title);
 }

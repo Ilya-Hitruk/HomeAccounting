@@ -6,7 +6,8 @@ import org.accounting.interfaces.CategoryHandler;
 import org.accounting.interfaces.ExpenseHandler;
 import org.accounting.menu.ConsoleReader;
 import org.accounting.menu.Notifier;
-import org.accounting.warns.Warns;
+import org.accounting.validity.ExecutionCode;
+import org.accounting.validity.Warns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +39,14 @@ public class HomeAccountingMenu {
 
     private static void addCategory() {
         String categoryTittle = CONSOLE_READER.readTittle();
-        int success = CATEGORY_HANDLER.addCategory(categoryTittle);
-        NOTIFIER.categoryAddSuccess(success);
+        ExecutionCode code = CATEGORY_HANDLER.addCategory(categoryTittle);
+        NOTIFIER.categoryAddSuccess(code);
     }
 
     private static void deleteCategory() {
         String category = CONSOLE_READER.readTittle();
-        int success = CATEGORY_HANDLER.removeCategory(category);
-        NOTIFIER.categoryRemoveSuccess(success);
+        ExecutionCode code = CATEGORY_HANDLER.removeCategory(category);
+        NOTIFIER.categoryRemoveSuccess(code);
     }
 
     private static void addExpense() {
@@ -55,8 +56,8 @@ public class HomeAccountingMenu {
         double amount = CONSOLE_READER.readAmount();
         String categoryTittle = CONSOLE_READER.readTittle();
 
-        int success = EXPENSE_HANDLER.addExpense(date, amount, categoryTittle);
-        NOTIFIER.expenseAddSuccess(success);
+        ExecutionCode code = EXPENSE_HANDLER.addExpense(date, amount, categoryTittle);
+        NOTIFIER.expenseAddSuccess(code);
     }
 
     private static void deleteExpense() {
@@ -66,8 +67,8 @@ public class HomeAccountingMenu {
         double amount = CONSOLE_READER.readAmount();
         String categoryTittle = CONSOLE_READER.readTittle();
 
-        int success = EXPENSE_HANDLER.removeExpense(date, amount, categoryTittle);
-        NOTIFIER.expenseRemoveSuccess(success);
+        ExecutionCode code = EXPENSE_HANDLER.removeExpense(date, amount, categoryTittle);
+        NOTIFIER.expenseRemoveSuccess(code);
     }
     public static void reports() {
 

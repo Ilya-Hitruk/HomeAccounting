@@ -1,4 +1,4 @@
-package org.accounting.warns;
+package org.accounting.validity;
 
 public enum Warns {
     NO_DECLARED_ACTION("Specified action does not exist!"),

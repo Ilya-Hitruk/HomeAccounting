@@ -5,6 +5,7 @@ import org.accounting.accounting_data.Expense;
 import org.accounting.interfaces.ExpenseHandler;
 import org.accounting.interfaces.Saver;
 import org.accounting.save_load.DataSaver;
+import org.accounting.validity.ExecutionCode;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,40 +17,40 @@ public class ExpenseTracker implements ExpenseHandler {
     private final List<Category> categories = new CategoryLoader().getCategories();
 
     @Override
-    public int addExpense(LocalDate date, double amount, String categoryName) {
+    public ExecutionCode addExpense(LocalDate date, double amount, String categoryName) {
         Optional<Category> optionalCategory = CATEGORY_FINDER.findCategory(categories, categoryName);
         Expense expense = new Expense(date, amount);
         Category category;
 
         if (optionalCategory.isEmpty()) {
-            return 1;
+            return ExecutionCode.CODE_FAILED_1;
         }
 
         category = optionalCategory.get();
         category.addExpense(expense);
         saver.save(categories);
-        return 0;
+        return ExecutionCode.CODE_SUCCESS;
     }
 
     @Override
-    public int removeExpense(LocalDate date, double amount, String categoryName) {
+    public ExecutionCode removeExpense(LocalDate date, double amount, String categoryName) {
         Optional<Category> optionalCategory = CATEGORY_FINDER.findCategory(categories, categoryName);
         Expense expense = new Expense(date, amount);
         Category category;
 
         if (optionalCategory.isEmpty()) {
-            return 1;
+            return ExecutionCode.CODE_FAILED_1;
         }
 
         category = optionalCategory.get();
 
         if (!category.getExpenses().contains(expense)) {
-            return 2;
+            return ExecutionCode.CODE_FAILED_2;
         }
 
         category.getExpenses().remove(expense);
         saver.save(categories);
-        return 0;
+        return ExecutionCode.CODE_SUCCESS;
     }
 
 }

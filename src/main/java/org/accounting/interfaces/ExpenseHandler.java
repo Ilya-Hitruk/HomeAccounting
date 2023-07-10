@@ -1,8 +1,10 @@
 package org.accounting.interfaces;
 
+import org.accounting.validity.ExecutionCode;
+
 import java.time.LocalDate;
 
 public interface ExpenseHandler {
-    int addExpense(LocalDate date, double amount, String categoryName);
-    int removeExpense(LocalDate date, double amount, String categoryName);
+    ExecutionCode addExpense(LocalDate date, double amount, String categoryName);
+    ExecutionCode removeExpense(LocalDate date, double amount, String categoryName);
 }

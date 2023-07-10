@@ -1,6 +1,7 @@
 package org.accounting.menu;
 
-import org.accounting.warns.Warns;
+import org.accounting.validity.ExecutionCode;
+import org.accounting.validity.Warns;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,36 +18,36 @@ public class Notifier {
                 Actions.ACTION.getMessage());
     }
 
-    public void categoryAddSuccess(int success) {
-        if (success == 0) {
+    public void categoryAddSuccess(ExecutionCode code) {
+        if (code.equals(ExecutionCode.CODE_SUCCESS)) {
             logger.info(Actions.CATEGORY_ADD_SUCCESS.getMessage());
         } else {
             logger.warn(Warns.CATEGORY_EXISTS.getMessage());
         }
     }
 
-    public void categoryRemoveSuccess(int success) {
-        if (success == 0) {
+    public void categoryRemoveSuccess(ExecutionCode code) {
+        if (code.equals(ExecutionCode.CODE_SUCCESS)) {
             logger.info(Actions.CATEGORY_DELETE_SUCCESS.getMessage());
-        } else if (success == 1) {
+        } else if (code.equals(ExecutionCode.CODE_FAILED_1)) {
             logger.warn(Warns.CATEGORY_DOES_NOT_EXIST.getMessage());
         } else {
             logger.warn(Warns.CATEGORY_DELETE_FAILED.getMessage());
         }
     }
 
-    public void expenseAddSuccess(int success) {
-        if (success == 0) {
+    public void expenseAddSuccess(ExecutionCode code) {
+        if (code.equals(ExecutionCode.CODE_SUCCESS)) {
             logger.info(Actions.EXPENSE_ADD_SUCCESS.getMessage());
         } else {
             logger.warn(Warns.CATEGORY_DOES_NOT_EXIST.getMessage());
         }
     }
 
-    public void expenseRemoveSuccess(int success) {
-        if (success == 0) {
+    public void expenseRemoveSuccess(ExecutionCode code) {
+        if (code.equals(ExecutionCode.CODE_SUCCESS)) {
             logger.info(Actions.EXPENSE_DELETE_SUCCESS.getMessage());
-        } else if (success == 1){
+        } else if (code.equals(ExecutionCode.CODE_FAILED_1)){
             logger.warn(Warns.CATEGORY_DOES_NOT_EXIST.getMessage());
         } else {
             logger.warn(Warns.EXPENSE_DELETE_FAILED.getMessage());

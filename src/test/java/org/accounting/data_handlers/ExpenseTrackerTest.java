@@ -1,5 +1,6 @@
 package org.accounting.data_handlers;
 
+import org.accounting.validity.ExecutionCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,29 +22,29 @@ class ExpenseTrackerTest {
 
     @Test
     void addExpenseShouldAddExpense() {
-        Assertions.assertEquals(0, new ExpenseTracker().addExpense(date, amount, categoryName));
+        Assertions.assertEquals(ExecutionCode.CODE_SUCCESS, new ExpenseTracker().addExpense(date, amount, categoryName));
     }
 
     @Test
     void addExpenseShouldWarnNotExistingCategory() {
         categoryName = "SomeCategory";
-        Assertions.assertEquals(1, new ExpenseTracker().addExpense(date, amount, categoryName));
+        Assertions.assertEquals(ExecutionCode.CODE_FAILED_1, new ExpenseTracker().addExpense(date, amount, categoryName));
     }
 
     @Test
     void removeExpenseShouldRemoveExpense() {
-        Assertions.assertEquals(0, new ExpenseTracker().removeExpense(date, amount, categoryName));
+        Assertions.assertEquals(ExecutionCode.CODE_SUCCESS, new ExpenseTracker().removeExpense(date, amount, categoryName));
     }
 
     @Test
     void removeExpenseShouldWarnNotExistingCategory() {
         categoryName = "SomeCategory";
-        Assertions.assertEquals(1, new ExpenseTracker().removeExpense(date, amount, categoryName));
+        Assertions.assertEquals(ExecutionCode.CODE_FAILED_1, new ExpenseTracker().removeExpense(date, amount, categoryName));
     }
 
     @Test
     void removeExpenseShouldWarnNotExistingExpense() {
         amount = 1;
-        Assertions.assertEquals(2, new ExpenseTracker().removeExpense(date, amount, categoryName));
+        Assertions.assertEquals(ExecutionCode.CODE_FAILED_2, new ExpenseTracker().removeExpense(date, amount, categoryName));
     }
 }

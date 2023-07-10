@@ -4,6 +4,7 @@ import org.accounting.accounting_data.Category;
 import org.accounting.interfaces.CategoryHandler;
 import org.accounting.interfaces.Saver;
 import org.accounting.save_load.DataSaver;
+import org.accounting.validity.ExecutionCode;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,34 +15,34 @@ public class CategoryTracker implements CategoryHandler {
     private final List<Category> categories = new CategoryLoader().getCategories();
 
     @Override
-    public int addCategory(String title) {
+    public ExecutionCode addCategory(String title) {
         Optional<Category> optionalCategory = categoryFinder.findCategory(categories, title);
         if (optionalCategory.isPresent()) {
-            return 1;
+            return ExecutionCode.CODE_FAILED_1;
         }
         categories.add(new Category(title));
         saver.save(categories);
-        return 0;
+        return ExecutionCode.CODE_SUCCESS;
     }
 
     @Override
-    public int removeCategory(String title) {
+    public ExecutionCode removeCategory(String title) {
         Optional<Category> optionalCategory = categoryFinder.findCategory(categories, title);
         Category category;
 
         if (optionalCategory.isEmpty()) {
-            return 1;
+            return ExecutionCode.CODE_FAILED_1;
         }
 
         category = optionalCategory.get();
 
         if (!category.getExpenses().isEmpty()) {
-            return 2;
+            return ExecutionCode.CODE_FAILED_2;
         }
 
         categories.remove(category);
         saver.save(categories);
-        return 0;
+        return ExecutionCode.CODE_SUCCESS;
     }
 
 }
