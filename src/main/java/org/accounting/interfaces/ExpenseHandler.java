@@ -1,10 +1,11 @@
 package org.accounting.interfaces;
 
-import org.accounting.validity.ExecutionCode;
+import org.accounting.exceptions.CategoryNotFoundException;
+import org.accounting.exceptions.ExpenseNotFoundException;
 
 import java.time.LocalDate;
 
 public interface ExpenseHandler {
-    ExecutionCode addExpense(LocalDate date, double amount, String categoryName);
-    ExecutionCode removeExpense(LocalDate date, double amount, String categoryName);
+    String addExpense(LocalDate date, double amount, String categoryName) throws CategoryNotFoundException;
+    String removeExpense(LocalDate date, double amount, String categoryName) throws CategoryNotFoundException, ExpenseNotFoundException;
 }

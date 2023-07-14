@@ -1,9 +1,11 @@
 package org.accounting.interfaces;
 
-import org.accounting.accounting_data.Category;
+import org.accounting.data.Category;
+import org.accounting.data.Expense;
 
 import java.util.List;
 
 public interface Loader {
-    List<Category> load();
+    List<Expense> loadExpenses();
+    List<Category> loadCategories();
 }
