@@ -1,18 +1,13 @@
 package org.accounting.interfaces;
 
-import org.accounting.custom.exceptions.*;
-import org.accounting.data.Expense;
-
-import java.util.List;
-
 public interface AccountingFunctions {
-    public void addCategory();
+    void addCategory();
 
-    public void deleteCategory();
+    void deleteCategory();
 
-    public void addExpense();
+    void addExpense();
 
-    public void deleteExpense();
+    void deleteExpense();
 
-    public void reports();
+    void reports();
 }

@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ReportHandlerImplTest {
 
     @Test
