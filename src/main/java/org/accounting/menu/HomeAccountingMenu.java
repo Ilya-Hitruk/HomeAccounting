@@ -1,6 +1,5 @@
 package org.accounting.menu;
 
-import org.accounting.io.MessageListener;
 import org.accounting.interfaces.AccountingFunctions;
 import org.accounting.io.ConsoleReader;
 import org.accounting.io.Notifier;

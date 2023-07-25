@@ -1,7 +1,5 @@
 package org.accounting.exceptions;
 
-import org.accounting.data.Expense;
-
 public class InvalidInputException extends Exception {
     public InvalidInputException(String input) {
         super(String.format("Invalid input data <%s>!\n" +
