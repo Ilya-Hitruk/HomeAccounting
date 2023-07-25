@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
-public interface ReportHandler {
+public interface ReportController {
 
     List<Expense> getExpensesByCategory(String categoryName);
     List<Expense> getExpensesForDay(LocalDate date);

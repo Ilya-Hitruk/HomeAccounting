@@ -1,8 +1,10 @@
-package org.accounting.handlers;
+package org.accounting.dao;
 
-import org.accounting.dao.DataStorage;
 import org.accounting.data.Expense;
-import org.accounting.interfaces.ReportHandler;
+import org.accounting.interfaces.Loader;
+import org.accounting.interfaces.Saver;
+import org.accounting.saveload.CSVLoader;
+import org.accounting.saveload.CSVSaver;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -10,58 +12,65 @@ import java.time.YearMonth;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
-public class ReportHandlerImpl implements ReportHandler {
+public class ExpenseStorage {
+    private static ExpenseStorage expenseStorage;
+    private static final Loader LOADER = new CSVLoader();
+    private static final Saver SAVER = new CSVSaver();
+    private final List<Expense> EXPENSES;
 
-    private static final DataStorage DATA_STORAGE = DataStorage.getInstance();
-    private static final List<Expense> EXPENSES = DATA_STORAGE.getExpenses();
-
-    @Override
-    public List<Expense> getExpensesByCategory(String categoryName) {
-        return EXPENSES.stream()
-                .filter(expense -> expense.getCategory().name().equals(categoryName))
-                .toList();
+    private ExpenseStorage() {
+        EXPENSES = LOADER.loadExpenses();
     }
 
-    @Override
+    public static ExpenseStorage getInstance() {
+        if (expenseStorage == null) {
+            expenseStorage = new ExpenseStorage();
+        }
+        return expenseStorage;
+    }
+
+    public List<Expense> getExpenses() {
+        return EXPENSES;
+    }
+
+    public void addExpense(Expense expense) {
+        EXPENSES.add(expense);
+        SAVER.saveExpenses(EXPENSES);
+    }
+
+    public void removeExpense(Expense expense) {
+        EXPENSES.remove(expense);
+        SAVER.saveExpenses(EXPENSES);
+    }
+
     public List<Expense> getExpensesForDay(LocalDate date) {
-        return EXPENSES.stream()
+        return getExpenses().stream()
                 .filter(expense -> expense.getDate().equals(date))
                 .toList();
     }
 
-    @Override
     public List<Expense> getExpensesForWeek(YearMonth yearMonth, int weekNumber) {
         LocalDate firstDayOfMonth = LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), weekNumber);
         LocalDate firstMondayOfMonth = firstDayOfMonth.with(TemporalAdjusters.firstInMonth(DayOfWeek.MONDAY));
         LocalDate mondayOfRequestedWeek = firstMondayOfMonth.plusWeeks(weekNumber - 1);
         LocalDate mondayOfNextWeek = mondayOfRequestedWeek.plusDays(7);
 
-        return EXPENSES.stream()
+        return getExpenses().stream()
                 .filter(expense ->
                         (expense.getDate().isAfter(mondayOfRequestedWeek.minusDays(1)) && expense.getDate().isBefore(mondayOfNextWeek)))
                 .toList();
     }
 
-    @Override
     public List<Expense> getExpensesForMonth(YearMonth yearMonth) {
-        return EXPENSES.stream()
+        return getExpenses().stream()
                 .filter(expense ->
                         (expense.getDate().getYear() == yearMonth.getYear() && expense.getDate().getMonth() == yearMonth.getMonth()))
                 .toList();
     }
 
-    @Override
     public List<Expense> getExpensesForYear(int year) {
-        return EXPENSES.stream()
+        return getExpenses().stream()
                 .filter(expense -> expense.getDate().getYear() == year)
                 .toList();
-    }
-
-    @Override
-    public double getTotalAmount(List<Expense> expenses) {
-        return expenses.stream()
-                .map(Expense::getAmount)
-                .reduce(Double::sum)
-                .orElse(0.0);
     }
 }

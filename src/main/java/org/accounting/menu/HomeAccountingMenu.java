@@ -26,7 +26,7 @@ public class HomeAccountingMenu {
                 case 4 -> ACCOUNTING_FUNCTIONS.deleteExpense();
                 case 5 -> ACCOUNTING_FUNCTIONS.reports();
                 case 0 -> processing = false;
-                default -> logger.warn(MessageListener.getMessage("incorrect_action"));
+                default -> logger.warn("No such action!");
             }
             System.out.println();
         } while (processing);

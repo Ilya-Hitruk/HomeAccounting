@@ -9,38 +9,25 @@ import org.accounting.saveload.CSVSaver;
 
 import java.util.List;
 
-public class DataStorage {
-    private static DataStorage dataStorage;
+public class CategoryStorage {
+    private static CategoryStorage categoryStorage;
     private static final Loader LOADER = new CSVLoader();
     private static final Saver SAVER = new CSVSaver();
-    private static final List<Expense> EXPENSES = LOADER.loadExpenses();
-    private static final List<Category> CATEGORIES = LOADER.loadCategories();
+    private final List<Category> CATEGORIES;
 
-    private DataStorage() {}
-
-    public static DataStorage getInstance() {
-        if (dataStorage == null) {
-            dataStorage = new DataStorage();
-        }
-        return dataStorage;
+    private CategoryStorage() {
+        CATEGORIES = LOADER.loadCategories();
     }
 
-    public List<Expense> getExpenses() {
-        return EXPENSES;
+    public static CategoryStorage getInstance() {
+        if (categoryStorage == null) {
+            categoryStorage = new CategoryStorage();
+        }
+        return categoryStorage;
     }
 
     public List<Category> getCategories() {
         return CATEGORIES;
-    }
-
-    public void addExpense(Expense expense) {
-        EXPENSES.add(expense);
-        SAVER.saveExpenses(EXPENSES);
-    }
-
-    public void removeExpense(Expense expense) {
-        EXPENSES.remove(expense);
-        SAVER.saveExpenses(EXPENSES);
     }
 
     public void addCategory(Category category) {
@@ -51,5 +38,11 @@ public class DataStorage {
     public void removeCategory(Category category) {
         CATEGORIES.remove(category);
         SAVER.saveCategories(CATEGORIES);
+    }
+
+    public List<Expense> getExpensesByCategory(String categoryName) {
+        return ExpenseStorage.getInstance().getExpenses().stream()
+                .filter(expense -> expense.getCategory().name().equals(categoryName))
+                .toList();
     }
 }
