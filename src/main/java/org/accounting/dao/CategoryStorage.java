@@ -1,7 +1,6 @@
 package org.accounting.dao;
 
 import org.accounting.data.Category;
-import org.accounting.data.Expense;
 import org.accounting.interfaces.Loader;
 import org.accounting.interfaces.Saver;
 import org.accounting.saveload.CSVLoader;
