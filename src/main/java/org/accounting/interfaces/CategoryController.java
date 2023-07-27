@@ -7,6 +7,4 @@ import org.accounting.exceptions.NotEmptyCategoryException;
 public interface CategoryController {
     void addCategory(String categoryName) throws CategoryExistsException;
     void removeCategory(String categoryName) throws CategoryNotFoundException, NotEmptyCategoryException;
-    boolean isCategoryExist(String categoryName);
-    boolean isCategoryEmpty(String categoryName);
 }

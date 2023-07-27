@@ -1,10 +1,12 @@
 package org.accounting.dao;
 
+import org.accounting.criteria.Criteria;
 import org.accounting.data.Expense;
 import org.accounting.interfaces.Loader;
 import org.accounting.interfaces.Saver;
 import org.accounting.saveload.CSVLoader;
 import org.accounting.saveload.CSVSaver;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -43,6 +45,35 @@ public class ExpenseStorage {
         SAVER.saveExpenses(EXPENSES);
     }
 
+    public List<Expense> getExpensesByCriteria(Criteria criteria) {
+        return EXPENSES
+                .stream()
+                .filter(expense -> {
+                    if (CollectionUtils.isNotEmpty(criteria.getCategories())) {
+                        return criteria.getCategories().contains(expense.getCategory());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(expense -> {
+                    if (criteria.getFrom() != null) {
+                        return expense.getDate().isAfter(criteria.getFrom()) ||
+                                expense.getDate().equals(criteria.getFrom());
+                    } else {
+                        return true;
+                    }
+                })
+                .filter(expense -> {
+                    if (criteria.getTo() != null) {
+                        return expense.getDate().isBefore(criteria.getTo()) ||
+                                expense.getDate().equals(criteria.getTo());
+                    } else {
+                        return true;
+                    }
+                })
+                .toList();
+    }
+
     public List<Expense> getExpensesForDay(LocalDate date) {
         return getExpenses().stream()
                 .filter(expense -> expense.getDate().equals(date))
@@ -72,5 +103,14 @@ public class ExpenseStorage {
         return getExpenses().stream()
                 .filter(expense -> expense.getDate().getYear() == year)
                 .toList();
+    }
+
+    public List<Expense> getExpensesByCategory(String categoryName) {
+        return ExpenseStorage.getInstance().getExpenses().stream()
+                .filter(expense -> expense.getCategory().name().equals(categoryName))
+                .toList();
+    }
+    public boolean isExpenseExist(Expense expense) {
+        return getExpenses().contains(expense);
     }
 }

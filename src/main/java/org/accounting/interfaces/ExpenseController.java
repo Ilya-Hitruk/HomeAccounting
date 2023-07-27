@@ -1,5 +1,6 @@
 package org.accounting.interfaces;
 
+import org.accounting.data.Expense;
 import org.accounting.exceptions.CategoryNotFoundException;
 import org.accounting.exceptions.ExpenseNotFoundException;
 

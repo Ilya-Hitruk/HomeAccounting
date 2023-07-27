@@ -1,5 +1,6 @@
 package org.accounting.interfaces;
 
+import org.accounting.criteria.Criteria;
 import org.accounting.data.Expense;
 
 import java.time.LocalDate;
@@ -7,7 +8,7 @@ import java.time.YearMonth;
 import java.util.List;
 
 public interface ReportController {
-
+    List<Expense> getExpensesByCriteria(Criteria criteria);
     List<Expense> getExpensesByCategory(String categoryName);
     List<Expense> getExpensesForDay(LocalDate date);
     List<Expense> getExpensesForWeek(YearMonth yearMonth, int weekNumber);

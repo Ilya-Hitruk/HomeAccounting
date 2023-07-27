@@ -1,5 +1,8 @@
 package org.accounting.menu;
 
+import org.accounting.criteria.Criteria;
+import org.accounting.dao.CategoryStorage;
+import org.accounting.dao.ExpenseStorage;
 import org.accounting.exceptions.*;
 import org.accounting.data.Expense;
 import org.accounting.controllers.CategoryControllerImpl;
@@ -17,17 +20,24 @@ import java.util.List;
 
 public class HomeAccountingFunctions implements AccountingFunctions {
     private final static Logger logger = LoggerFactory.getLogger(HomeAccountingFunctions.class);
-    private final static ConsoleReader CONSOLE_READER = new ConsoleReader();
-    private final static Notifier NOTIFIER = new Notifier();
+    private final ConsoleReader CONSOLE_READER;
+    private final Notifier NOTIFIER;
+    private final CategoryController CATEGORY_CONTROLLER;
+    private final ExpenseController EXPENSE_CONTROLLER;
+    private final ReportController REPORT;
 
-    private final static CategoryController CATEGORY_HANDLER = new CategoryControllerImpl();
-    private final static ExpenseController EXPENSE_HANDLER = new ExpenseControllerImpl();
-    private final static ReportController REPORT = new ReportControllerImpl();
+    public HomeAccountingFunctions() {
+        CONSOLE_READER = new ConsoleReader();
+        NOTIFIER = new Notifier();
+        CATEGORY_CONTROLLER = new CategoryControllerImpl(CategoryStorage.getInstance());
+        EXPENSE_CONTROLLER = new ExpenseControllerImpl(CategoryStorage.getInstance(), ExpenseStorage.getInstance());
+        REPORT = new ReportControllerImpl(ExpenseStorage.getInstance());
+    }
 
     @Override
     public void addCategory() {
         try {
-            CATEGORY_HANDLER.addCategory(CONSOLE_READER.readTittle());
+            CATEGORY_CONTROLLER.addCategory(CONSOLE_READER.readTittle());
             logger.info("Category has been successfully added!");
         } catch (CategoryExistsException e) {
             logger.warn(e.getMessage());
@@ -37,7 +47,7 @@ public class HomeAccountingFunctions implements AccountingFunctions {
     @Override
     public void deleteCategory() {
         try {
-            CATEGORY_HANDLER.removeCategory(CONSOLE_READER.readTittle());
+            CATEGORY_CONTROLLER.removeCategory(CONSOLE_READER.readTittle());
             logger.info("Category has been successfully removed!");
         } catch (CategoryNotFoundException | NotEmptyCategoryException e) {
             logger.warn(e.getMessage());
@@ -47,7 +57,7 @@ public class HomeAccountingFunctions implements AccountingFunctions {
     @Override
     public void addExpense() {
         try {
-            EXPENSE_HANDLER.addExpense(CONSOLE_READER.readDate(), CONSOLE_READER.readAmount(), CONSOLE_READER.readTittle());
+            EXPENSE_CONTROLLER.addExpense(CONSOLE_READER.readDate(), CONSOLE_READER.readAmount(), CONSOLE_READER.readTittle());
             logger.info("Expense has been successfully added!");
         } catch (CategoryNotFoundException | InvalidInputException e) {
             logger.warn(e.getMessage());
@@ -57,7 +67,7 @@ public class HomeAccountingFunctions implements AccountingFunctions {
     @Override
     public void deleteExpense() {
         try {
-            EXPENSE_HANDLER.removeExpense(CONSOLE_READER.readDate(), CONSOLE_READER.readAmount(), CONSOLE_READER.readTittle());
+            EXPENSE_CONTROLLER.removeExpense(CONSOLE_READER.readDate(), CONSOLE_READER.readAmount(), CONSOLE_READER.readTittle());
             logger.info("Expense has been successfully removed!");
         } catch (CategoryNotFoundException | ExpenseNotFoundException | InvalidInputException e) {
             logger.warn(e.getMessage());
@@ -74,19 +84,19 @@ public class HomeAccountingFunctions implements AccountingFunctions {
             expenses = getSpecifiedReport(report);
             double totalAmount = REPORT.getTotalAmount(expenses);
             NOTIFIER.showReport(expenses, totalAmount);
-        } catch (InvalidInputException | NoDeclaredReportException | InvalidYearException | InvalidWeekException |
-                 InvalidMonthException e) {
+        } catch (InvalidInputException | NoDeclaredReportException e) {
             logger.warn(e.getMessage());
         }
     }
 
-    private List<Expense> getSpecifiedReport(int report) throws InvalidInputException, NoDeclaredReportException, InvalidYearException, InvalidWeekException, InvalidMonthException {
+    private List<Expense> getSpecifiedReport(int report) throws InvalidInputException, NoDeclaredReportException {
         return switch (report) {
             case 1 -> REPORT.getExpensesForDay(CONSOLE_READER.readDate());
             case 2 -> REPORT.getExpensesForWeek(CONSOLE_READER.getYearAndMonth(), CONSOLE_READER.readWeek());
             case 3 -> REPORT.getExpensesForMonth(CONSOLE_READER.getYearAndMonth());
             case 4 -> REPORT.getExpensesForYear(CONSOLE_READER.readYear());
             case 5 -> REPORT.getExpensesByCategory(CONSOLE_READER.readTittle());
+            case 6 -> REPORT.getExpensesByCriteria(new Criteria(CONSOLE_READER.chooseCategories(), CONSOLE_READER.readDate(), CONSOLE_READER.readDate()));
             default -> throw new NoDeclaredReportException();
         };
     }

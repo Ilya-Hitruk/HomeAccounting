@@ -1,6 +1,6 @@
 package org.accounting.controllers;
 
-import org.accounting.dao.CategoryStorage;
+import org.accounting.criteria.Criteria;
 import org.accounting.dao.ExpenseStorage;
 import org.accounting.data.Expense;
 import org.accounting.interfaces.ReportController;
@@ -10,11 +10,20 @@ import java.time.YearMonth;
 import java.util.List;
 
 public class ReportControllerImpl implements ReportController {
-    private static final ExpenseStorage EXPENSE_STORAGE = ExpenseStorage.getInstance();
-    private static final CategoryStorage CATEGORY_STORAGE = CategoryStorage.getInstance();
+    private final ExpenseStorage EXPENSE_STORAGE;
+
+    public ReportControllerImpl(ExpenseStorage expenseStorage) {
+        EXPENSE_STORAGE = expenseStorage;
+    }
+
+    @Override
+    public List<Expense> getExpensesByCriteria(Criteria criteria) {
+        return EXPENSE_STORAGE.getExpensesByCriteria(criteria);
+    }
+
     @Override
     public List<Expense> getExpensesByCategory(String categoryName) {
-        return CATEGORY_STORAGE.getExpensesByCategory(categoryName);
+        return EXPENSE_STORAGE.getExpensesByCategory(categoryName);
     }
 
     @Override

@@ -1,59 +1,29 @@
 package org.accounting.criteria;
 
-import org.accounting.data.Expense;
+import org.accounting.data.Category;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.List;
 
 public class Criteria {
-    private List<Expense> result;
-    private LocalDate day;
-    private int week;
-    private YearMonth month;
-    private String category;
+    private final List<Category> categories;
+    private final LocalDate from;
+    private final LocalDate to;
 
-    public static CriteriaBuilder aCriteria() {
-        return new CriteriaBuilder();
+    public Criteria(List<Category> categories, LocalDate from, LocalDate to) {
+        this.categories = categories;
+        this.from = from;
+        this.to = to;
+    }
+    public List<Category> getCategories() {
+        return categories;
     }
 
-    public void setResult(List<Expense> result) {
-        this.result = result;
+    public LocalDate getFrom() {
+        return from;
     }
 
-    public void setDay(LocalDate day) {
-        this.day = day;
-    }
-
-    public void setWeek(int week) {
-        this.week = week;
-    }
-
-    public void setMonth(YearMonth month) {
-        this.month = month;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public List<Expense> getResult() {
-        return result;
-    }
-
-    public LocalDate getDay() {
-        return day;
-    }
-
-    public int getWeek() {
-        return week;
-    }
-
-    public YearMonth getMonth() {
-        return month;
-    }
-
-    public String getCategory() {
-        return category;
+    public LocalDate getTo() {
+        return to;
     }
 }

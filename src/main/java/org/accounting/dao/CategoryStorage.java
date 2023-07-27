@@ -40,9 +40,11 @@ public class CategoryStorage {
         SAVER.saveCategories(CATEGORIES);
     }
 
-    public List<Expense> getExpensesByCategory(String categoryName) {
-        return ExpenseStorage.getInstance().getExpenses().stream()
-                .filter(expense -> expense.getCategory().name().equals(categoryName))
-                .toList();
+    public boolean isCategoryExist(String categoryName) {
+        return getCategories().stream().anyMatch(category -> category.name().equalsIgnoreCase(categoryName));
+    }
+
+    public boolean isCategoryEmpty(String categoryName) {
+        return ExpenseStorage.getInstance().getExpenses().stream().noneMatch(expense -> expense.getCategory().name().equalsIgnoreCase(categoryName));
     }
 }

@@ -1,18 +1,19 @@
 package org.accounting.io;
 
+import org.accounting.dao.CategoryStorage;
+import org.accounting.data.Category;
 import org.accounting.exceptions.InvalidInputException;
-import org.accounting.exceptions.InvalidMonthException;
-import org.accounting.exceptions.InvalidWeekException;
-import org.accounting.exceptions.InvalidYearException;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleReader {
-
+    private static final CategoryStorage CATEGORY_STORAGE = CategoryStorage.getInstance();
     private static final MessageListener MESSAGE_LISTENER = MessageListener.getInstance();
     private final static Scanner scanner = new Scanner(System.in);
     public int readAction() {
@@ -37,7 +38,7 @@ public class ConsoleReader {
         try {
             date = LocalDate.parse(dateString);
         } catch (DateTimeParseException e) {
-            throw new InvalidInputException("date = " + dateString);
+            throw InvalidInputException.invalidExpense("date = " + dateString);
         }
         return date;
     }
@@ -49,62 +50,81 @@ public class ConsoleReader {
         try {
             amount = Double.parseDouble(amountString);
         } catch (NumberFormatException e) {
-            throw new InvalidInputException("amount = " + amountString);
+            throw InvalidInputException.invalidExpense("amount = " + amountString);
         }
         return amount;
     }
 
-    public int readWeek() throws InvalidWeekException {
+    public int readWeek() throws InvalidInputException {
         System.out.print((MESSAGE_LISTENER.getMessage("input_week")));
         String inputWeek = scanner.nextLine();
         int week;
         try {
             week = Integer.parseInt(inputWeek);
             if (week > 5 || week < 1) {
-                throw new InvalidWeekException(inputWeek);
+                throw InvalidInputException.invalidWeek(inputWeek);
             }
         } catch (NumberFormatException e) {
-            throw new InvalidWeekException(inputWeek);
+            throw InvalidInputException.invalidWeek(inputWeek);
         }
         return week;
     }
 
-    public YearMonth getYearAndMonth() throws InvalidYearException, InvalidMonthException {
+    public YearMonth getYearAndMonth() throws InvalidInputException {
         YearMonth yearMonth;
         try {
             yearMonth = YearMonth.of(readYear(), readMonth());
-        } catch (InvalidYearException e) {
-            throw new InvalidYearException(e.getMessage());
-        } catch (InvalidMonthException e) {
-            throw new InvalidMonthException(e.getMessage());
+        } catch (InvalidInputException e) {
+            throw new InvalidInputException(e.getMessage());
         }
         return yearMonth;
     }
 
-    public int readYear() throws InvalidYearException {
+    public int readYear() throws InvalidInputException {
         System.out.print((MESSAGE_LISTENER.getMessage("input_year")));
         String inputYear = scanner.nextLine();
         int year;
         try {
             year = Integer.parseInt(inputYear);
             if (year > LocalDate.now().getYear()) {
-                throw new InvalidYearException(inputYear);
+                throw InvalidInputException.invalidYear(inputYear);
             }
         } catch (NumberFormatException e) {
-            throw new InvalidYearException(inputYear);
+            throw InvalidInputException.invalidYear(inputYear);
         }
         return year;
     }
 
-    public int readMonth() throws InvalidMonthException {
+    public int readMonth() throws InvalidInputException {
         System.out.print((MESSAGE_LISTENER.getMessage("input_month")));
-        String input = scanner.nextLine();
+        String inputMonth = scanner.nextLine();
         int month;
         try {
-            month = Integer.parseInt(input);
+            month = Integer.parseInt(inputMonth);
         } catch (NumberFormatException | DateTimeException e) {
-            throw new InvalidMonthException(input);
+            throw InvalidInputException.invalidMonth(inputMonth);
         }
         return month;
+    }
+
+    public List<Category> chooseCategories() {
+        List<String> presentCategories = new ArrayList<>(CATEGORY_STORAGE.getCategories().stream().map(Category::name).toList());
+        List<Category> resultList = new ArrayList<>();
+        String chosenCategory = "";
+
+        while (!chosenCategory.equals("Stop")) {
+            System.out.println(presentCategories);
+            System.out.print(MESSAGE_LISTENER.getMessage("choose_category"));
+
+            chosenCategory = scanner.nextLine();
+            if (presentCategories.contains(chosenCategory)) {
+                resultList.add(new Category(chosenCategory));
+                presentCategories.remove(chosenCategory);
+                System.out.println("Category <" + chosenCategory + "> has been chosen\n");
+                continue;
+            }
+            System.out.println("No such category <" + chosenCategory + ">\n");
+        }
+        return resultList;
     }
 }

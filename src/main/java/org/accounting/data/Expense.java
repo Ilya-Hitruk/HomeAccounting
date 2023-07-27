@@ -9,7 +9,6 @@ public class Expense {
     private final double amount;
     private final Category category;
 
-
     @ConstructorProperties({"date", "amount, category"})
     public Expense(LocalDate date, double amount, Category category) {
         this.date = date;
